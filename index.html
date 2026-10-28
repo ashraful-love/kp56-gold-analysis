@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="description" content="KP56 Gold Analysis — Phase 1 demo dashboard for XAUUSD. Frontend foundation only: synthetic demo data, no live broker feed, no trading execution.">
+<title>KP56 Gold Analysis — XAUUSD Dashboard (Phase 1 Demo)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,700;1,6..96,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#overview">Skip to dashboard content</a>
+
+<!-- ============================== ASSAY RAIL (desktop only) ============================== -->
+<div class="assay-rail" aria-hidden="true">
+  <span>KP56 &nbsp;·&nbsp; XAUUSD &nbsp;·&nbsp; DEMO DATA &nbsp;·&nbsp; PHASE 1 &nbsp;·&nbsp; NO LIVE FEED</span>
+</div>
+
+<div class="shell">
+
+  <!-- ============================== HEADER ============================== -->
+  <header class="topbar" role="banner">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">K<span>56</span></span>
+        <span class="brand-text">
+          <strong>KP56 Gold Analysis</strong>
+          <em>XAUUSD · Gold / US Dollar</em>
+        </span>
+      </div>
+
+      <div class="topbar-status">
+        <span class="chip chip-demo" id="dataStatusChip" title="Data source status">DEMO</span>
+        <span class="chip chip-ghost" id="telegramStatusChip" title="Telegram connection status">TG · NOT CONNECTED</span>
+        <span class="stamp-time">Updated <time id="lastUpdate" datetime="">—</time></span>
+      </div>
+
+      <div class="topbar-actions">
+        <button type="button" class="btn btn-icon" id="refreshBtn" aria-label="Refresh demo data">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Refresh</span>
+        </button>
+        <a class="btn btn-icon" href="#settings" id="settingsBtn" aria-label="Open settings">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.8v2.4M12 18.8v2.4M4.5 7.5l2 1.2M17.5 15.3l2 1.2M4.5 16.5l2-1.2M17.5 8.7l2-1.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span>Settings</span>
+        </a>
+      </div>
+    </div>
+    <p class="topbar-note" id="topbarNote">Phase 1 frontend foundation — deterministic synthetic (demo) candles. No broker connection is configured.</p>
+  </header>
+
+  <!-- ============================== HERO ============================== -->
+  <section class="hero" aria-labelledby="heroTitle">
+    <div class="hero-media" aria-hidden="true">
+      <img class="hero-img" alt=""
+           src="https://images.pexels.com/photos/35065436/pexels-photo-35065436.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+           onerror="this.remove()">
+    </div>
+    <div class="hero-body">
+      <p class="eyebrow">Phase 1 · Frontend foundation · GitHub Pages ready</p>
+      <h1 id="heroTitle">Gold analysis,<br><span class="ital">stamped and audited</span><br>before it is trusted.</h1>
+      <p class="hero-lede">A mobile-first XAUUSD workstation: four independent validation tests, a risk calculator and a
+        50-candle forecast panel. Every number on this page in Phase 1 is <strong>synthetic demonstration data</strong> —
+        the live MT5 feed, the analysis engine and Telegram alerts arrive in later phases.</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="#validation">Run the 4-stage validation</a>
+        <a class="btn btn-line" href="#risk">Open risk calculator</a>
+      </div>
+    </div>
+    <div class="disclaimer-strip" id="disclaimerStrip" role="note">
+      <strong>Disclaimer.</strong> Analysis shown here is informational only, is generated from synthetic sample data in
+      Phase 1, and does not guarantee profitable trades. Nothing on this site is financial advice, and no order is ever
+      placed by this website.
+    </div>
+  </section>
+
+  <main id="main">
+
+    <!-- ============================== 01 MARKET OVERVIEW ============================== -->
+    <section class="section" id="overview" aria-labelledby="overviewTitle">
+      <header class="section-head">
+        <span class="section-no">01</span>
+        <div>
+          <h2 id="overviewTitle">Market overview</h2>
+          <p class="section-sub">Synthetic sample values. Not live XAUUSD prices.</p>
+        </div>
+      </header>
+
+      <div class="tf-row">
+        <span class="mini-label">Timeframe</span>
+        <div class="seg js-tf-group" role="group" aria-label="Select timeframe">
+          <button type="button" class="seg-btn js-tf" data-tf="M5">M5</button>
+          <button type="button" class="seg-btn js-tf" data-tf="M15">M15</button>
+          <button type="button" class="seg-btn js-tf is-active" data-tf="H1">H1</button>
+        </div>
+        <span class="tf-hint" id="tfHint">H1 selected — higher-timeframe trend context.</span>
+      </div>
+
+      <div class="ledger" id="ledger">
+        <div class="ledger-cell">
+          <span class="mini-label">Current price (synthetic)</span>
+          <span class="value mono" id="ovPrice">—</span>
+          <span class="note" id="ovPriceNote">Synthetic anchor — not a live quote</span>
+        </div>
+        <div class="ledger-cell">
+          <span class="mini-label">Market direction</span>
+          <span class="value" id="ovDirection">—</span>
+          <span class="note" id="ovDirectionNote">Awaiting timeframe selection</span>
+        </div>
+        <div class="ledger-cell">
+          <span class="mini-label">H1 trend</span>
+          <span class="value" id="ovH1">—</span>
+          <span class="note" id="ovH1Note">Higher timeframe bias</span>
+        </div>
+        <div class="ledger-cell">
+          <span class="mini-label">M15 trend</span>
+          <span class="value" id="ovM15">—</span>
+          <span class="note" id="ovM15Note">Swing structure</span>
+        </div>
+        <div class="ledger-cell">
+          <span class="mini-label">M5 entry status</span>
+          <span class="value" id="ovM5">—</span>
+          <span class="note" id="ovM5Note">Trigger timeframe</span>
+        </div>
+        <div class="ledger-cell">
+          <span class="mini-label">Volatility status</span>
+          <span class="value" id="ovVol">—</span>
+          <span class="note" id="ovVolNote">ATR relative to recent range</span>
+        </div>
+      </div>
+      <p class="data-quality" id="dataQuality">Candle data is validated before any analysis runs.</p>
+    </section>
+
+    <!-- ============================== 02 CHART ============================== -->
+    <section class="section" id="chart" aria-labelledby="chartTitle">
+      <header class="section-head">
+        <span class="section-no">02</span>
+        <div>
+          <h2 id="chartTitle">Candlestick chart</h2>
+          <p class="section-sub">Historical candles vs. hypothetical forecast candles — clearly separated.</p>
+        </div>
+      </header>
+
+      <div class="panel chart-panel">
+        <div class="chart-bar">
+          <div class="seg js-tf-group" role="group" aria-label="Chart timeframe">
+            <button type="button" class="seg-btn js-tf" data-tf="M5">M5</button>
+            <button type="button" class="seg-btn js-tf" data-tf="M15">M15</button>
+            <button type="button" class="seg-btn js-tf is-active" data-tf="H1">H1</button>
+          </div>
+          <div class="chart-toggles">
+            <label class="switch"><input type="checkbox" id="tglVolume" checked><span>Volume</span></label>
+            <label class="switch"><input type="checkbox" id="tglLevels" checked><span>S / R</span></label>
+            <label class="switch"><input type="checkbox" id="tglForecast" checked><span>Forecast</span></label>
+            <label class="switch"><input type="checkbox" id="tglPlan"><span>Trade plan</span></label>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="mainChart" role="img"
+                  aria-label="Synthetic XAUUSD candlestick chart with hypothetical forecast candles"></canvas>
+          <div class="chart-fallback" id="chartFallback" hidden>
+            Chart canvas could not be initialised. All values are still listed in text form above and below.
+          </div>
+        </div>
+
+        <ul class="legend" id="chartLegend">
+          <li><span class="sw sw-bull"></span>Historical candle (synthetic)</li>
+          <li><span class="sw sw-forecast"></span>Hypothetical forecast candle</li>
+          <li><span class="sw sw-entry"></span>Entry (demo example)</li>
+          <li><span class="sw sw-sl"></span>Stop loss</li>
+          <li><span class="sw sw-tp"></span>TP1 / TP2</li>
+          <li><span class="sw sw-sr"></span>Support / resistance</li>
+        </ul>
+        <p class="chart-foot">Adapter: <code>chart.js → KP56Chart#render(dataset)</code> accepts any OHLC array returned by
+          <code>data-provider.js</code>. Replacing the mock provider with a real feed requires no chart changes.</p>
+      </div>
+    </section>
+
+    <!-- ============================== 03 ANALYSIS MODE ============================== -->
+    <section class="section" id="mode" aria-labelledby="modeTitle">
+      <header class="section-head">
+        <span class="section-no">03</span>
+        <div>
+          <h2 id="modeTitle">Analysis mode &amp; data source</h2>
+          <p class="section-sub">One website, three ways of reading the market. The active mode is always visible.</p>
+        </div>
+      </header>
+
+      <div class="tf-row">
+        <span class="mini-label">Mode</span>
+        <div class="seg" role="group" aria-label="Select analysis mode">
+          <button type="button" class="seg-btn js-mode" data-mode="mt5" aria-pressed="false">A · MT5 live</button>
+          <button type="button" class="seg-btn js-mode" data-mode="snapshot" aria-pressed="false">B · Screenshots</button>
+          <button type="button" class="seg-btn js-mode is-active" data-mode="demo" aria-pressed="true">C · Demo</button>
+        </div>
+        <span class="tf-hint">Demo is selected by default. Nothing is presented as live until a feed proves it.</span>
+      </div>
+
+      <div class="panel" id="modeStatus"></div>
+
+      <div class="panel" id="mt5Panel" hidden>
+        <h3 class="panel-title">Mode A — MT5 broker feed <span class="est-tag">REQUIRES A RUNNING BACKEND</span></h3>
+        <p class="note">This website is static: GitHub Pages cannot hold a MetaTrader 5 connection. Live XAUUSD data
+          comes from <code>backend/mt5_server.py</code> running on a Windows machine (or VPS) where your MT5 terminal
+          is installed and logged in. The browser only ever calls read-only endpoints — there is no trading function
+          anywhere in this project. Broker symbol names differ (<code>XAUUSD</code>, <code>XAUUSDm</code>,
+          <code>GOLD</code>), so the backend reads whatever symbol you configure and reports it back.</p>
+        <div class="field">
+          <label for="mt5Endpoint">MT5 backend address</label>
+          <input type="url" id="mt5Endpoint" inputmode="url" autocomplete="off"
+                 placeholder="http://localhost:8000">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-gold" id="mt5ConnectBtn">Connect</button>
+          <button type="button" class="btn btn-line" id="mt5RefreshBtn">Refresh status</button>
+        </div>
+        <p class="form-error" id="mt5Status" role="status">Not connected. Live prices are not displayed until a
+          backend answers and its data passes validation.</p>
+        <h3 class="panel-title">Endpoints provided by the backend</h3>
+        <div class="rows">
+          <div class="row"><span class="row-label">GET /api/health</span><span class="row-value">terminal and symbol reachability</span></div>
+          <div class="row"><span class="row-label">GET /api/market/status</span><span class="row-value">connection, spread, bid/ask</span></div>
+          <div class="row"><span class="row-label">GET /api/market/price</span><span class="row-value">current tick</span></div>
+          <div class="row"><span class="row-label">GET /api/market/candles</span><span class="row-value">?symbol=XAUUSD&amp;timeframe=M15&amp;limit=500</span></div>
+          <div class="row"><span class="row-label">GET /api/market/symbol-info</span><span class="row-value">contract size, tick value, tick size</span></div>
+        </div>
+        <p class="note">Credentials live in environment variables on that machine only
+          (<code>MT5_LOGIN</code>, <code>MT5_PASSWORD</code>, <code>MT5_SERVER</code>) — never in this page and never
+          in a public repository. If your backend is on another machine, GitHub Pages will call it over HTTPS and the
+          backend must allow your site's origin (<code>ALLOWED_ORIGIN</code>). Free hosting rarely permits continuous
+          operation, so expect the status to read OFFLINE or NOT CONNECTED outside the hours your machine is running.</p>
+      </div>
+    </section>
+
+    <!-- ============================== 04 THREE-SCREENSHOT ANALYSIS ============================== -->
+    <section class="section" id="snapshotSection" aria-labelledby="snapshotTitle">
+      <header class="section-head">
+        <span class="section-no">04</span>
+        <div>
+          <h2 id="snapshotTitle">Three-screenshot analysis</h2>
+          <p class="section-sub">H1 trend · M15 structure · M5 entry — reviewed together, never guessed.</p>
+        </div>
+      </header>
+
+      <div class="shot-panel" id="shotPanel"></div>
+
+      <div class="panel" id="shotManual"></div>
+
+      <div class="certificate snapshot-cert" id="snapshotResult">
+        <p class="empty-row">No snapshot analysis recorded yet.</p>
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">Why automated screenshot reading is not active here</h3>
+        <p class="note">Genuine image analysis needs a vision model or a backend service: an upload button on its own
+          is not analysis, and inventing readings from an image would be dishonest. Until such a provider is
+          configured, the panel reports <strong>IMAGE ANALYSIS BACKEND NOT CONFIGURED</strong> and the manual fallback
+          records only what you can actually see.</p>
+        <p class="note">To enable it later, implement <code>window.KP56ImageAnalysisProvider</code> (the contract is
+          documented at the top of <code>screenshot-analyser.js</code>) pointing at your own vision service, and tick
+          the consent box so the disclosure is explicit before anything is transmitted. Your screenshots are never
+          sent anywhere in this phase — they stay inside your browser.</p>
+      </div>
+    </section>
+
+    <!-- ============================== 05 SMC MAP ============================== -->
+    <section class="section" id="smcmap" aria-labelledby="smcmapTitle">
+      <header class="section-head">
+        <span class="section-no">05</span>
+        <div>
+          <h2 id="smcmapTitle">SMC map &amp; multi-timeframe report</h2>
+          <p class="section-sub">Everything the SMC engine detects, with its rule, evidence, confirmation and invalidation.</p>
+        </div>
+      </header>
+
+      <div class="panel">
+        <h3 class="panel-title">Multi-timeframe questions <span class="est-tag">H1 · M15 · M5</span></h3>
+        <div class="rows" id="mtfReport"></div>
+      </div>
+
+      <div class="panel">
+        <h3 class="panel-title">Detected concepts</h3>
+        <div id="smcMap"></div>
+      </div>
+    </section>
+
+    <!-- ============================== VALIDATION ============================== -->
+    <section class="section" id="validation" aria-labelledby="validationTitle">
+      <header class="section-head">
+        <span class="section-no">06</span>
+        <div>
+          <h2 id="validationTitle">Four independent validation tests</h2>
+          <p class="section-sub">Each test is an isolated module. Demonstration results only until the analysis engine is connected.</p>
+        </div>
+      </header>
+
+      <div class="run-bar">
+        <button type="button" class="btn btn-gold" id="runValidationBtn">Run 4-stage validation (demo)</button>
+        <p class="run-note" id="runNote">Tests are in <strong>WAITING</strong> state until you run them. They evaluate synthetic
+          candles, so no result on this page may be treated as genuine market analysis.</p>
+      </div>
+
+      <!-- Test 1 -->
+      <article class="panel test-card" id="testTrend">
+        <header class="test-head">
+          <span class="test-no">Test 1</span>
+          <h3>Trend checker</h3>
+          <span class="badge badge-wait" id="trendStatus">WAITING</span>
+        </header>
+        <p class="test-summary" id="trendSummary">Not run yet.</p>
+        <div class="rows" id="trendRows">
+          <p class="empty-row">Awaiting validation run.</p>
+        </div>
+        <div class="missing" id="trendMissing"></div>
+        <p class="module-tag">module: <code>trend-checker.js → TrendChecker.evaluate()</code></p>
+      </article>
+
+      <!-- Test 2 -->
+      <article class="panel test-card" id="testSmc">
+        <header class="test-head">
+          <span class="test-no">Test 2</span>
+          <h3>SMC checker</h3>
+          <span class="badge badge-wait" id="smcStatus">WAITING</span>
+        </header>
+        <p class="test-summary" id="smcSummary">Not run yet.</p>
+        <div class="rows" id="smcRows">
+          <p class="empty-row">Awaiting validation run.</p>
+        </div>
+        <div class="missing" id="smcMissing"></div>
+        <p class="module-tag">module: <code>smc-checker.js → SmcChecker.evaluate()</code></p>
+      </article>
+
+      <!-- Test 3 -->
+      <article class="panel test-card" id="testEntry">
+        <header class="test-head">
+          <span class="test-no">Test 3</span>
+          <h3>Entry quality checker</h3>
+          <span class="badge badge-wait" id="entryStatus">WAITING</span>
+        </header>
+        <p class="test-summary" id="entrySummary">Not run yet.</p>
+        <div class="rows" id="entryRows">
+          <p class="empty-row">Awaiting validation run.</p>
+        </div>
+        <div class="missing" id="entryMissing"></div>
+        <p class="module-tag">module: <code>entry-checker.js → EntryChecker.evaluate()</code></p>
+      </article>
+
+      <!-- Test 4 -->
+      <article class="panel test-card" id="testRisk">
+        <header class="test-head">
+          <span class="test-no">Test 4</span>
+          <h3>Risk &amp; forecast checker</h3>
+          <span class="badge badge-wait" id="riskStatus">WAITING</span>
+        </header>
+        <p class="test-summary" id="riskSummary">Not run yet.</p>
+        <div class="rows" id="riskRows">
+          <p class="empty-row">Awaiting validation run.</p>
+        </div>
+        <div class="missing" id="riskMissing"></div>
+        <p class="module-tag">module: <code>risk-forecast.js → RiskForecast.evaluate()</code></p>
+      </article>
+    </section>
+
+    <!-- ============================== 04 SIGNAL ============================== -->
+    <section class="section" id="signal" aria-labelledby="signalTitle">
+      <header class="section-head">
+        <span class="section-no">07</span>
+        <div>
+          <h2 id="signalTitle">Final signal</h2>
+          <p class="section-sub">A single decision, assembled from the four tests.</p>
+        </div>
+      </header>
+
+      <div class="certificate" id="certificate">
+        <svg class="guilloche" viewBox="0 0 400 260" preserveAspectRatio="none" aria-hidden="true">
+          <g fill="none" stroke="currentColor" stroke-width="0.5">
+            <ellipse cx="200" cy="130" rx="196" ry="120"/><ellipse cx="200" cy="130" rx="182" ry="106"/>
+            <ellipse cx="200" cy="130" rx="168" ry="92"/><ellipse cx="200" cy="130" rx="154" ry="78"/>
+            <ellipse cx="200" cy="130" rx="196" ry="120" transform="rotate(12 200 130)"/>
+            <ellipse cx="200" cy="130" rx="196" ry="120" transform="rotate(-12 200 130)"/>
+            <ellipse cx="200" cy="130" rx="168" ry="92" transform="rotate(24 200 130)"/>
+            <ellipse cx="200" cy="130" rx="168" ry="92" transform="rotate(-24 200 130)"/>
+            <ellipse cx="200" cy="130" rx="120" ry="118" transform="rotate(30 200 130)"/>
+            <ellipse cx="200" cy="130" rx="120" ry="118" transform="rotate(-30 200 130)"/>
+          </g>
+        </svg>
+
+        <div class="cert-top">
+          <span class="mini-label">Final signal · KP56 engine</span>
+          <span class="chip chip-ghost" id="certDataChip">DATA: DEMO / SYNTHETIC</span>
+        </div>
+
+        <p class="cert-state" id="signalState" data-state="waiting">WAITING FOR DATA</p>
+        <p class="cert-sub" id="signalSub">No validated live dataset has been loaded.</p>
+        <div class="cert-stamp" id="signalStamp" aria-hidden="true">BLOCKED</div>
+
+        <div class="cert-grid">
+          <div>
+            <span class="mini-label">Entry</span>
+            <span class="mono" id="sigEntry">—</span>
+          </div>
+          <div>
+            <span class="mini-label">Stop loss</span>
+            <span class="mono" id="sigSl">—</span>
+          </div>
+          <div>
+            <span class="mini-label">TP1</span>
+            <span class="mono" id="sigTp1">—</span>
+          </div>
+          <div>
+            <span class="mini-label">TP2</span>
+            <span class="mono" id="sigTp2">—</span>
+          </div>
+          <div>
+            <span class="mini-label">Risk / reward</span>
+            <span class="mono" id="sigRr">—</span>
+          </div>
+          <div>
+            <span class="mini-label">Field status</span>
+            <span class="mono" id="sigFieldStatus">NOT SET</span>
+          </div>
+          <div>
+            <span class="mini-label">Signal expiry (placeholder)</span>
+            <span class="mono" id="sigExpiry">Not defined in Phase 1</span>
+          </div>
+          <div>
+            <span class="mini-label">Invalidation level (placeholder)</span>
+            <span class="mono" id="sigInvalid">Not defined in Phase 1</span>
+          </div>
+        </div>
+
+        <div class="cert-reasons">
+          <span class="mini-label">Why a signal is blocked</span>
+          <ul id="signalReasons">
+            <li>Data source is <strong>DEMO</strong> — synthetic candles cannot produce a tradable signal.</li>
+            <li>Validation tests have not been run against verified live data.</li>
+            <li>Telegram notifications are not connected, so no alert could be delivered.</li>
+          </ul>
+        </div>
+
+        <div class="cert-actions">
+          <button type="button" class="btn btn-line" id="ackBtn">Acknowledge (no trade executed)</button>
+          <span class="ack-note" id="ackNote">Acknowledgement is recorded in this browser only.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== 05 RISK CALCULATOR ============================== -->
+    <section class="section" id="risk" aria-labelledby="riskTitle">
+      <header class="section-head">
+        <span class="section-no">08</span>
+        <div>
+          <h2 id="riskTitle">Risk calculator</h2>
+          <p class="section-sub">Frontend arithmetic only. This website never places an order.</p>
+        </div>
+      </header>
+
+      <div class="split">
+        <form class="panel form" id="riskForm" novalidate>
+          <div class="field">
+            <label for="rcDirection">Direction (for directionally correct geometry)</label>
+            <select id="rcDirection">
+              <option value="BUY" selected>BUY — stop below entry, targets above</option>
+              <option value="SELL">SELL — stop above entry, targets below</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="rcBalance">Account balance (USD)</label>
+            <input type="number" id="rcBalance" inputmode="decimal" min="1" step="any" value="1000" placeholder="e.g. 1000">
+          </div>
+          <div class="field">
+            <label for="rcRisk">Risk percentage (%)</label>
+            <input type="number" id="rcRisk" inputmode="decimal" min="0.01" max="100" step="any" value="1" placeholder="e.g. 1">
+          </div>
+          <div class="field">
+            <label for="rcEntry">Entry price</label>
+            <input type="number" id="rcEntry" inputmode="decimal" step="any" placeholder="e.g. 2381.40">
+          </div>
+          <div class="field">
+            <label for="rcSl">Stop loss price</label>
+            <input type="number" id="rcSl" inputmode="decimal" step="any" placeholder="e.g. 2374.00">
+          </div>
+          <div class="field">
+            <label for="rcTarget">Target price (optional)</label>
+            <input type="number" id="rcTarget" inputmode="decimal" step="any" placeholder="e.g. 2396.00">
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-gold" id="rcCalcBtn">Calculate</button>
+            <button type="button" class="btn btn-line" id="rcClearBtn">Clear</button>
+          </div>
+          <p class="form-error" id="rcError" role="alert"></p>
+        </form>
+
+        <div class="panel results">
+          <h3 class="panel-title">Result <span class="est-tag">ESTIMATE</span></h3>
+          <div class="rows">
+            <div class="row"><span class="mini-label">Monetary risk</span><span class="mono" id="rcRiskAmount">—</span></div>
+            <div class="row"><span class="mini-label">Stop distance</span><span class="mono" id="rcStopDist">—</span></div>
+            <div class="row"><span class="mini-label">Target distance</span><span class="mono" id="rcTargetDist">—</span></div>
+            <div class="row"><span class="mini-label">Risk / reward ratio</span><span class="mono" id="rcRr">—</span></div>
+            <div class="row"><span class="mini-label">Theoretical lot size</span><span class="mono" id="rcLot">—</span></div>
+          </div>
+          <p class="note" id="rcLotNote">Lot size is only calculated once broker specifications (contract size, tick value,
+            tick size) are configured below. Until then it is deliberately withheld — an invented lot size would be dangerous.</p>
+
+          <h3 class="panel-title">Broker specifications <span class="est-tag">MANUAL</span></h3>
+          <div class="spec-grid">
+            <div class="field">
+              <label for="bsContract">Contract size (units)</label>
+              <input type="number" id="bsContract" inputmode="decimal" min="0" step="any" placeholder="e.g. 100">
+            </div>
+            <div class="field">
+              <label for="bsTickValue">Tick value (USD per lot)</label>
+              <input type="number" id="bsTickValue" inputmode="decimal" min="0" step="any" placeholder="e.g. 1">
+            </div>
+            <div class="field">
+              <label for="bsTickSize">Tick size (price units)</label>
+              <input type="number" id="bsTickSize" inputmode="decimal" min="0" step="any" placeholder="e.g. 0.01">
+            </div>
+          </div>
+          <button type="button" class="btn btn-line" id="bsApplyBtn">Apply broker specifications</button>
+          <p class="note" id="bsStatus">Broker specifications: not configured.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== 06 FORECAST ============================== -->
+    <section class="section" id="forecast" aria-labelledby="forecastTitle">
+      <header class="section-head">
+        <span class="section-no">09</span>
+        <div>
+          <h2 id="forecastTitle">Next 50 candles — forecast panel</h2>
+          <p class="section-sub">FORECAST NOT AVAILABLE — illustrative scenario paths only. No model, no accuracy claim, no guarantee.</p>
+        </div>
+      </header>
+
+      <div class="panel chart-panel">
+        <div class="chart-bar">
+          <span class="mini-label">Horizon: 50 candles · <span id="forecastTf">H1</span></span>
+          <span class="badge badge-fail" id="forecastStatus">FORECAST NOT AVAILABLE</span>
+          <div class="seg" role="group" aria-label="Forecast scenario emphasis">
+            <button type="button" class="seg-btn js-scenario" data-sc="bull">Bullish</button>
+            <button type="button" class="seg-btn js-scenario is-active" data-sc="base">Balanced</button>
+            <button type="button" class="seg-btn js-scenario" data-sc="bear">Bearish</button>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="forecastChart" role="img" aria-label="Hypothetical 50-candle forecast scenario chart"></canvas>
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario"><span class="mini-label">Bullish scenario</span><span class="mono" id="scBull">—</span></div>
+          <div class="scenario"><span class="mini-label">Bearish scenario</span><span class="mono" id="scBear">—</span></div>
+          <div class="scenario"><span class="mini-label">Sideways scenario</span><span class="mono" id="scSide">—</span></div>
+          <div class="scenario"><span class="mini-label">Uncertainty range</span><span class="mono" id="scUncertainty">—</span></div>
+        </div>
+        <p class="note" id="forecastMissing">Still missing: a documented probabilistic model over a 50-candle horizon,
+          backtesting with measured error on out-of-sample data, and a calibrated confidence interval.</p>
+        <p class="chart-foot" id="forecastMethod">
+          <strong>Method (planned, not implemented).</strong> The future engine is intended to estimate a probability
+          distribution of candle paths over a 50-candle horizon from volatility, structure and momentum features, then
+          report bullish / bearish / sideways scenarios with an uncertainty band. In Phase 1 the paths drawn above are
+          <strong>hypothetical illustrations</strong>, not predictions. A forecast is never a guarantee of price movement.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============================== 07 TELEGRAM ============================== -->
+    <section class="section" id="telegram" aria-labelledby="telegramTitle">
+      <header class="section-head">
+        <span class="section-no">10</span>
+        <div>
+          <h2 id="telegramTitle">Telegram alerts</h2>
+          <p class="section-sub">Interface only. No bot token is requested, stored or transmitted.</p>
+        </div>
+      </header>
+
+      <div class="split">
+        <div class="panel">
+          <div class="tg-status">
+            <span class="badge badge-fail" id="tgStatus">NOT CONNECTED</span>
+            <p class="note">Real Telegram messaging requires a running backend (Phase 2 or later). Credentials must live on
+              that server — never in this page, and never in browser localStorage.</p>
+          </div>
+          <div class="rows">
+            <label class="row row-switch"><span class="mini-label">Notifications enabled</span>
+              <input type="checkbox" id="tgEnabled" class="switch-input"></label>
+            <label class="row row-switch"><span class="mini-label">BUY alerts</span>
+              <input type="checkbox" id="tgBuy" class="switch-input"></label>
+            <label class="row row-switch"><span class="mini-label">SELL alerts</span>
+              <input type="checkbox" id="tgSell" class="switch-input"></label>
+            <label class="row row-switch"><span class="mini-label">System-error alerts</span>
+              <input type="checkbox" id="tgErr" class="switch-input"></label>
+          </div>
+          <div class="field">
+            <label for="tgCooldown">Notification cooldown (minutes)</label>
+            <input type="number" id="tgCooldown" inputmode="numeric" min="0" max="1440" step="1" value="15">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-line" id="tgTestBtn">Send test message</button>
+            <button type="button" class="btn btn-line" id="tgSaveBtn">Save preferences</button>
+          </div>
+          <p class="form-error" id="tgMessage" role="status"></p>
+        </div>
+
+        <div class="panel">
+          <h3 class="panel-title">What will be wired up later</h3>
+          <ol class="steps">
+            <li><strong>Phase 2 —</strong> a small Python backend holds the bot token as an environment variable and calls
+              the Telegram Bot API from the server side.</li>
+            <li><strong>Phase 2 —</strong> this page posts <code>{symbol, direction, entry, sl, tp1, tp2}</code> to that
+              backend over HTTPS; the backend decides whether to send.</li>
+            <li><strong>Phase 3 —</strong> cooldown, duplicate-signal protection and delivery logging live on the server so
+              they keep working when your phone is offline.</li>
+            <li><strong>Phase 1 (now) —</strong> only the preference controls are real, and they are stored locally as
+              non-sensitive UI settings.</li>
+          </ol>
+          <p class="note">Preference switches in Phase 1 are stored in your browser only and are not transmitted anywhere.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== 08 HISTORY ============================== -->
+    <section class="section" id="history" aria-labelledby="historyTitle">
+      <header class="section-head">
+        <span class="section-no">11</span>
+        <div>
+          <h2 id="historyTitle">Signal history</h2>
+          <p class="section-sub">Demonstration records. Not real trading performance.</p>
+        </div>
+      </header>
+
+      <div class="panel">
+        <div class="chart-bar">
+          <span class="chip chip-ghost">DEMO RECORDS</span>
+          <div class="chart-toggles">
+            <button type="button" class="btn btn-line" id="historySeedBtn">Load demo records</button>
+            <button type="button" class="btn btn-line" id="historyClearBtn">Clear list</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="history-table">
+            <caption class="sr-only">Demonstration signal history records</caption>
+            <thead>
+              <tr>
+                <th scope="col">Timestamp</th><th scope="col">Direction</th><th scope="col">Entry</th>
+                <th scope="col">SL</th><th scope="col">TP1</th><th scope="col">TP2</th>
+                <th scope="col">Validation</th><th scope="col">Outcome</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="historyEmpty" hidden>
+          <p><strong>No records yet.</strong> Load the demo records to see the table layout, or clear the list to see this
+            empty state. Real history will be written by the backend in a later phase — browser storage is temporary and
+            can be cleared by the user at any time.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== 09 SETTINGS ============================== -->
+    <section class="section" id="settings" aria-labelledby="settingsTitle">
+      <header class="section-head">
+        <span class="section-no">12</span>
+        <div>
+          <h2 id="settingsTitle">Settings</h2>
+          <p class="section-sub">Non-sensitive UI preferences, stored in this browser only.</p>
+        </div>
+      </header>
+
+      <div class="panel">
+        <h3 class="panel-title">Current settings <span class="est-tag">LOCAL ONLY</span></h3>
+        <div class="rows" id="settingsSummary"></div>
+        <p class="note" id="settingsNotice">Preferences are stored in this browser only and never include secrets.
+          Use the button below to change them.</p>
+        <div class="form-actions">
+          <button type="button" class="btn btn-gold" id="settingsOpenBtn">Open settings</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== SETTINGS DIALOG ============================== -->
+    <div class="modal" id="settingsModal" hidden>
+      <div class="modal-backdrop" id="settingsBackdrop"></div>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsDialogTitle">
+        <header class="modal-head">
+          <h3 id="settingsDialogTitle">Settings</h3>
+          <button type="button" class="modal-close" id="settingsCloseBtn" aria-label="Close settings without saving">&times;</button>
+        </header>
+        <form class="form" id="settingsForm" novalidate>
+        <div class="split-fields">
+          <div class="field">
+            <label for="setTimeframe">Preferred timeframe</label>
+            <select id="setTimeframe">
+              <option value="M5">M5</option>
+              <option value="M15" selected>M15</option>
+              <option value="H1">H1</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="setRr">Minimum risk / reward ratio</label>
+            <input type="number" id="setRr" inputmode="decimal" min="1" max="20" step="0.1" value="2">
+          </div>
+          <div class="field">
+            <label for="setRisk">Default risk percentage (%)</label>
+            <input type="number" id="setRisk" inputmode="decimal" min="0.01" max="100" step="any" value="1">
+          </div>
+          <div class="field">
+            <label for="setSpread">Maximum spread (points, placeholder)</label>
+            <input type="number" id="setSpread" inputmode="decimal" min="0" step="any" value="35">
+          </div>
+        </div>
+
+        <fieldset class="fieldset">
+          <legend>Entry-quality filters (used by Test 3)</legend>
+          <div class="split-fields">
+            <div class="field">
+              <label for="setRsiMin">RSI minimum</label>
+              <input type="number" id="setRsiMin" inputmode="decimal" min="0" max="100" step="1" value="35">
+            </div>
+            <div class="field">
+              <label for="setRsiMax">RSI maximum</label>
+              <input type="number" id="setRsiMax" inputmode="decimal" min="0" max="100" step="1" value="68">
+            </div>
+            <div class="field">
+              <label for="setAdxMin">ADX minimum</label>
+              <input type="number" id="setAdxMin" inputmode="decimal" min="0" max="100" step="1" value="20">
+            </div>
+            <div class="field">
+              <label for="setVolMax">Max volatility ratio (ATR)</label>
+              <input type="number" id="setVolMax" inputmode="decimal" min="0.1" max="20" step="0.05" value="1.55">
+            </div>
+            <div class="field">
+              <label for="setMaxAge">Max data age (seconds)</label>
+              <input type="number" id="setMaxAge" inputmode="numeric" min="1" max="86400" step="1" value="300">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend>Notification preferences</legend>
+          <label class="row row-switch"><span class="mini-label">Enable notifications</span>
+            <input type="checkbox" id="setNotify" class="switch-input"></label>
+          <label class="row row-switch"><span class="mini-label">Notify on BUY setups</span>
+            <input type="checkbox" id="setNotifyBuy" class="switch-input" checked></label>
+          <label class="row row-switch"><span class="mini-label">Notify on SELL setups</span>
+            <input type="checkbox" id="setNotifySell" class="switch-input" checked></label>
+        </fieldset>
+
+        <fieldset class="fieldset">
+          <legend>Theme</legend>
+          <div class="radio-row">
+            <label class="radio"><input type="radio" name="theme" value="dark" checked> Dark (default)</label>
+            <label class="radio"><input type="radio" name="theme" value="light"> Light (assay paper)</label>
+          </div>
+        </fieldset>
+
+        <div class="field">
+          <span class="mini-label">Data source status</span>
+          <p class="readonly-box" id="setSource">DEMO — deterministic mock provider. No live broker feed is configured, and
+            no API key is used anywhere in this project.</p>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-gold" id="settingsSaveBtn">Save settings</button>
+          <button type="button" class="btn btn-line" id="settingsResetBtn">Reset to defaults</button>
+          <button type="button" class="btn btn-line" id="settingsCancelBtn">Close without saving</button>
+        </div>
+        <p class="form-error" id="settingsMessage" role="status"></p>
+        </form>
+      </div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- ============================== ROADMAP ============================== -->
+    <section class="section roadmap" id="roadmap" aria-labelledby="roadmapTitle">
+      <header class="section-head">
+        <span class="section-no">13</span>
+        <div>
+          <h2 id="roadmapTitle">Project status</h2>
+          <p class="section-sub">What works today, and what deliberately does not.</p>
+        </div>
+      </header>
+      <div class="road-grid">
+        <div class="road-col">
+          <h3 class="mini-label">Working in Phase 1</h3>
+          <ul class="tick">
+            <li>Deterministic synthetic candles (M5 / M15 / H1)</li>
+            <li>Hand-drawn canvas charts with forecast separation</li>
+            <li>Four independent validation modules with real indicator maths</li>
+            <li>Risk calculator with input validation</li>
+            <li>Settings, theme toggle and browser-stored preferences</li>
+            <li>Responsive layout for phones and desktops</li>
+          </ul>
+        </div>
+        <div class="road-col">
+          <h3 class="mini-label">Requires Phase 2 or later</h3>
+          <ul class="cross">
+            <li>Live MT5 / broker OHLC data</li>
+            <li>Python analysis engine and 4-stage production validation</li>
+            <li>Probabilistic 50-candle forecasting</li>
+            <li>Telegram message delivery</li>
+            <li>Durable signal history storage</li>
+            <li>Any form of automated trading (never planned for this site)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================== FOOTER ============================== -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-inner">
+      <p class="footer-brand">KP56 Gold Analysis</p>
+      <p>Phase 1 frontend foundation. All prices, candles, indicators, signals and history records on this page are
+        <strong>synthetic demonstration data</strong> and must not be mistaken for live XAUUSD market values.</p>
+      <p><strong>Disclaimer:</strong> this tool is informational only. It is not financial advice, it does not guarantee
+        profitable trades, and it never executes an order. Trading gold with leverage carries substantial risk of loss.</p>
+      <p class="footer-meta">No API keys · No credentials · No third-party trading libraries · Static files, GitHub Pages compatible</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ============================== BOTTOM TAB BAR (mobile) ============================== -->
+<nav class="tabbar" aria-label="Dashboard sections">
+  <a href="#overview"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Overview</a>
+  <a href="#chart"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M7 4v16M7 8h4M7 16h4M17 4v16M17 7h-4M17 14h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Chart</a>
+  <a href="#validation"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12.5l4 4 10-10M4 20h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Tests</a>
+  <a href="#signal"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Signal</a>
+  <a href="#risk"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3v18M6 7h9a3 3 0 0 1 0 6H8a3 3 0 0 0 0 6h9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Risk</a>
+  <a href="#settings"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 3v2.4M12 18.6V21M4.6 7.6l2 1.2M17.4 15.2l2 1.2M4.6 16.4l2-1.2M17.4 8.8l2-1.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>Setup</a>
+</nav>
+
+<noscript>
+  <p style="padding:16px;background:#D64A41;color:#fff;font-family:sans-serif">
+    This dashboard needs JavaScript for its charts and calculators. The written content above remains readable without it.
+  </p>
+</noscript>
+
+<script src="data-provider.js"></script>
+<script src="candle-validator.js"></script>
+<script src="indicators.js"></script>
+<script src="chart.js"></script>
+<script src="smc-engine.js"></script>
+<script src="trend-checker.js"></script>
+<script src="smc-checker.js"></script>
+<script src="entry-checker.js"></script>
+<script src="risk-forecast.js"></script>
+<script src="signal-engine.js"></script>
+<script src="settings.js"></script>
+<script src="screenshot-analyser.js"></script>
+<script src="phase3-ui.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

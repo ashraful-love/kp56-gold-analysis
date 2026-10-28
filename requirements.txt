@@ -1,0 +1,9 @@
+# KP56 Gold Analysis — MT5 backend dependencies (Phase 3)
+#
+# Install on the machine that runs the MetaTrader 5 terminal (Windows):
+#     pip install -r requirements.txt
+#
+# The official MetaTrader 5 package only works where the terminal runs.
+# It cannot run on GitHub Pages, on Android, or on most free static hosts.
+
+MetaTrader5>=5.0.45
